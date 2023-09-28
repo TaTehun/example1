@@ -1,0 +1,33 @@
+public class InstructionSet {
+    public static final int LOAD_VALUE = 1;
+    public static final int LOAD_ADDR = 2;
+    public static final int LOAD_IND_ADDR = 3;
+    public static final int LOAD_IDX_X_ADDR = 4;
+    public static final int LOAD_IDX_Y_ADDR = 5;
+    public static final int LOAD_SP_X = 6;
+    public static final int STORE_ADDR = 7;
+    public static final int GET = 8;
+    public static final int PUT_PORT = 9;
+    public static final int ADD_X = 10;
+    public static final int ADD_Y = 11;
+    public static final int SUB_X = 12;
+    public static final int SUB_Y = 13;
+    public static final int COPY_TO_X = 14;
+    public static final int COPY_FROM_X = 15;
+    public static final int COPY_TO_Y = 16;
+    public static final int COPY_FROM_Y = 17;
+    public static final int COPY_TO_SP = 18;
+    public static final int COPY_FROM_SP = 19;
+    public static final int JUMP_ADDR = 20;
+    public static final int JUMP_IF_EQUAL = 21;
+    public static final int JUMP_IF_NOT_EQUAL = 22;
+    public static final int CALL_ADDR = 23;
+    public static final int RET = 24;
+    public static final int INC_X = 25;
+    public static final int DEC_X = 26;
+    public static final int PUSH = 27;
+    public static final int POP = 28;
+    public static final int INT = 29;
+    public static final int IRET = 30;
+    public static final int END = 50;
+}
