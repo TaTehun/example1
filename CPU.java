@@ -5,9 +5,9 @@ public class CPU {
     private static int PC, SP, IR, AC, X, Y;
     private static boolean kernelMode = false;
 
-    public static void execute() {
+    public static void execute(String inputFile) {
         try {
-            ProcessBuilder pb = new ProcessBuilder("java", "Memory");
+            ProcessBuilder pb = new ProcessBuilder("java", "Memory", inputFile);
             Process memoryProcess = pb.start();
 
             try (Scanner memoryInput = new Scanner(memoryProcess.getInputStream());
@@ -15,18 +15,20 @@ public class CPU {
 
                 while (true) {
                     IR = memoryInput.nextInt();
+                    System.out.println("Processing instruction: " + IR);
+
 
                     switch (IR) {
-                        case InstructionSet.LOAD_VALUE:
-                            AC = memoryInput.nextInt();
-                            break;
-                    case InstructionSet.LOAD_ADDR:
+                    case 1: // Load value
+                        AC = memoryInput.nextInt();
+                        break;
+                    case 2: // Load addr
                         int address = memoryInput.nextInt();
                         memoryOutput.println("READ");
                         memoryOutput.println(address);
                         AC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.LOAD_IND_ADDR:
+                    case 3: // LoadInd addr
                         address = memoryInput.nextInt();
                         memoryOutput.println("READ");
                         memoryOutput.println(address);
@@ -35,34 +37,34 @@ public class CPU {
                         memoryOutput.println(indirectAddress);
                         AC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.LOAD_IDX_X_ADDR:
+                    case 4: // LoadIdxX addr
                         address = memoryInput.nextInt() + X;
                         memoryOutput.println("READ");
                         memoryOutput.println(address);
                         AC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.LOAD_IDX_Y_ADDR:
+                    case 5: // LoadIdxY addr
                         address = memoryInput.nextInt() + Y;
                         memoryOutput.println("READ");
                         memoryOutput.println(address);
                         AC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.LOAD_SP_X:
+                    case 6: // LoadSpX
                         address = SP + X;
                         memoryOutput.println("READ");
                         memoryOutput.println(address);
                         AC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.STORE_ADDR:
+                    case 7: // Store addr
                         address = memoryInput.nextInt();
                         memoryOutput.println("WRITE");
                         memoryOutput.println(address);
                         memoryOutput.println(AC);
                         break;
-                    case InstructionSet.GET:
+                    case 8: // Get
                         AC = (int) (Math.random() * 100 + 1);
                         break;
-                    case InstructionSet.PUT_PORT:
+                    case 9: // Put port
                         int port = memoryInput.nextInt();
                         if (port == 1) {
                             System.out.println(AC);
@@ -70,72 +72,78 @@ public class CPU {
                             System.out.print((char) AC);
                         }
                         break;
-                    case InstructionSet.ADD_X:
+                    case 10: // AddX
                         AC += X;
                         break;
-                    case InstructionSet.ADD_Y:
+                    case 11: // AddY
                         AC += Y;
                         break;
-                    case InstructionSet.SUB_X:
+                    case 12: // SubX
                         AC -= X;
                         break;
-                    case InstructionSet.SUB_Y:
+                    case 13: // SubY
                         AC -= Y;
                         break;
-                    case InstructionSet.COPY_TO_X:
+                    case 14: // CopyToX
                         X = AC;
                         break;
-                    case InstructionSet.COPY_FROM_X:
+                    case 15: // CopyFromX
                         AC = X;
                         break;
-                    case InstructionSet.COPY_TO_Y:
+                    case 16: // CopyToY
                         Y = AC;
                         break;
-                    case InstructionSet.COPY_FROM_Y:
+                    case 17: // CopyFromY
                         AC = Y;
                         break;
-                    case InstructionSet.COPY_TO_SP:
+                    case 18: // CopyToSp
                         SP = AC;
                         break;
-                    case InstructionSet.COPY_FROM_SP:
+                    case 19: // CopyFromSp
                         AC = SP;
                         break;
-                    case InstructionSet.JUMP_ADDR:
+                    case 20: // Jump addr
                         PC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.JUMP_IF_EQUAL:
+                    case 21: // JumpIfEqual addr
                         if (AC == 0) {
                             PC = memoryInput.nextInt();
                         }
                         break;
-                    case InstructionSet.JUMP_IF_NOT_EQUAL:
+                    case 22: // JumpIfNotEqual addr
                         if (AC != 0) {
                             PC = memoryInput.nextInt();
                         }
                         break;
-                    case InstructionSet.CALL_ADDR:
+                    case 23: // Call addr
                         address = memoryInput.nextInt();
                         memoryOutput.println("WRITE");
                         memoryOutput.println(SP--);
                         memoryOutput.println(PC);
                         PC = address;
                         break;
-                    case InstructionSet.RET:
+                    case 24: // Ret
                         memoryOutput.println("READ");
                         memoryOutput.println(++SP);
                         PC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.PUSH:
+                    case 25: // IncX
+                        X++;
+                        break;
+                    case 26: // DecX
+                        X--;
+                        break;
+                    case 27: // Push
                         memoryOutput.println("WRITE");
                         memoryOutput.println(SP--);
                         memoryOutput.println(AC);
                         break;
-                    case InstructionSet.POP:
+                    case 28: // Pop
                         memoryOutput.println("READ");
                         memoryOutput.println(++SP);
                         AC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.INT:
+                    case 29: // Int
                         if (!kernelMode) {
                             kernelMode = true;
                             memoryOutput.println("WRITE");
@@ -144,28 +152,32 @@ public class CPU {
                             PC = 1000; // Assuming interrupt starts at 1000
                         }
                         break;
-                    case InstructionSet.IRET:
+                    case 30: // IRet
                         kernelMode = false;
                         memoryOutput.println("READ");
                         memoryOutput.println(++SP);
                         PC = memoryInput.nextInt();
                         break;
-                    case InstructionSet.END:
+                    case 50: // End
                         memoryOutput.println("EXIT");
                         memoryProcess.waitFor();
                         return;
-                    default:
-                        System.out.println("Unknown instruction: " + IR);
-                        return;
+                        default:
+                            System.out.println("Unknown instruction: " + IR);
+                            return;
                     }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     public static void main(String[] args) {
-        execute();
+        if (args.length > 0) {
+            execute(args[0]);
+        } else {
+            System.out.println("Please provide an input file.");
+        }
     }
 }
